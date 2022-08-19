@@ -9,7 +9,7 @@ addTodoButton.addEventListener('click', (event) => {
     event.preventDefault()
     if (todoInput.value === ''){
      return
-    } 
+    }
     todoList.push({id: todoId, todoText: todoInput.value, checked: false})
     todoId = todoId + 1
     paintTodoList()
@@ -17,8 +17,6 @@ addTodoButton.addEventListener('click', (event) => {
 })
 
 const deleteTodo = (id) => {
-  console.log(id)
-  console.log(todoList)
   todoList = todoList.filter(item => item.id !== id)
   paintTodoList()
 }
@@ -34,42 +32,18 @@ const checkTodo = (id) => {
 const paintTodoList = () => {
 
   todoElement.innerHTML = `${todoList.map(todo => {
-    if (todo.checked){
       return `<li class="todoItem">
-        <input type='checkbox' checked onclick='checkTodo(${todo.id})'/>
-        <p>${todo.todoText}</p>
-        <button onclick='deleteTodo(${todo.id})'>x</button>
+          <input type='checkbox' ${todo.checked ?'checked' :null} onclick='checkTodo(${todo.id})'/>
+          <p>${todo.todoText}</p>
+          <button id="deleteButton">x</button>
       </li>`
-    } else {
-      return `<li class="todoItem">
-        <input type='checkbox' onclick='checkTodo(${todo.id})'/>
-        <p>${todo.todoText}</p>
-        <button onclick='deleteTodo(${todo.id})'>x</button>
-      </li>`
-    }
   }).join('')}`
 }
+// <!--        <button  onclick='deleteTodo(${todo.id})'>x</button>-->
 
-// const createTodoList = () => {
-
-
-//   const todoItem = document.createElement('li')
-//   const deleteButton = document.createElement('button')
-  
-//   todoList.forEach((todo) => {
-    
-//     todoItem.classList.add('todoItem')
-//     todoItem.innerText = todo.todoText
-//     deleteButton.innerText = 'x'
-//     deleteButton.addEventListener('click', (event) => {
-//       event.preventDefault()
-//       console.log(event.target)
-//       const li = event.target.parentNode
-//       todoElement.removeChild(li)
-//     })
-    
-//     todoItem.appendChild(deleteButton)
-//     todoElement.appendChild(todoItem)
-//   })
-
-// }
+document.getElementById('deleteButton').addEventListener('click', (event) => {
+  if(event){
+    console.log(event)
+    console.log(1)
+  }
+})
