@@ -23,6 +23,14 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
+import {
+    getAuth,
+    signInWithPopup,
+    GoogleAuthProvider,
+  } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
+  import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -42,6 +50,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-document.getElementById('googleLogin').addEventListener(('click'), (event) => {
-  console.log(1111)
-})
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
+auth.languageCode = "ko";
+
+document.getElementById("googleLogin").addEventListener("click", () => {
+    signInWithPopup(auth, provider)
+    .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        window.location.href =  'todo.html'
+      console.log(result);
+      // ...
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      console.log(error);
+      // ...
+    });
+});
