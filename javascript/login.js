@@ -63,7 +63,6 @@ document.getElementById("googleLogin").addEventListener("click", () => {
         // The signed-in user info.
         const user = result.user;
         window.location.href =  'todo.html'
-      console.log(result);
       // ...
     })
     .catch((error) => {

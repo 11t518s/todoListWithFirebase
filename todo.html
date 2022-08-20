@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/index.css" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
     여기서는 로그인 된 상태에서 투두를 만들어볼게요!
-    <script type="module" defer src="javascript/firbaseTodo.js"></script>
 
+    <header >TodoList</header>
+    <form>
+        <input id='todoInput'/> <button id="addTodoButton">추가하기</button>
+    </form>
+
+    <ul id="todoList"></ul>
+    
+    <script type="module" defer async src="./javascript/loginTodo.js"></script>
 </body>
 </html>
