@@ -30,23 +30,26 @@ const checkTodo = (id) => {
   }})
   paintTodoList()
 }
+
 const paintTodoList = () => {
 
   todoElement.innerHTML = `${todoList.map(todo => {
       return `<li class="todoItem">
-          <input type='checkbox' ${todo.checked ?'checked' :null} onclick='checkTodo(${todo.id})'/>
+          <input class="checkButton" type='checkbox' ${todo.checked ?'checked' :null} id=${todo.id} />
           <p>${todo.todoText}</p>
-          <button  onclick='deleteTodo(${todo.id})'>x</button>
+          <button class="deleteButton" id=${todo.id}>x</button>
         </li>`
     }).join('')}`
   }
       
-// 이렇게 모든 클릭을 listner하고 id 가 맞으면 작동하게 할 수는 있는데 좋아보이지 않음.
-// <button id="deleteButton">x</button>
-// document.addEventListener('click', (event) => {
-//   if(event.target && event.target.id== 'deleteButton'){
-//     //do something
-//     console.log(111)
-//     console.log(event)
-// }
-// })
+document.addEventListener('click', (event) => {
+
+  if(event.target.className === 'checkButton') {
+    checkTodo(event.target.id)
+  }
+
+  if(event.target.className === 'deleteButton') {
+    deleteTodo(event.target.id)
+  }
+
+})

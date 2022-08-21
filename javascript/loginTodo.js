@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
 import { getFirestore , collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCH_qQKgvX04MCiInM0t-1el2gXoNc9YpI",
@@ -16,48 +18,62 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
+const auth = getAuth();
+console.log(auth)
 
-const todoText = document.getElementById('todoInput')
+const deleteTodo =  async (id) => {
+  await deleteDoc(doc(db, "todo", id))
+  await paintTodoList()
+ };
+ 
+const checkTodo = async (id, checked) => {
+   await updateDoc(doc(db, 'todo', id), {
+     checked: checked
+   });
+   await paintTodoList()
+ };
 
-document.getElementById('addTodoButton').addEventListener('click', async (event) => {
+ document.getElementById('addTodoButton').addEventListener('click', async (event) => {
   event.preventDefault()
-  try {
-    await addDoc(collection(db, "todo"), {
-      todoText: todoText.value,
-      checked: false,
-      createdAt: new Date()
-    });
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+  const todoText = document.getElementById('todoInput');
+
+  await addDoc(collection(db, "todo"), {
+    todoText: todoText.value,
+    checked: false,
+    createdAt: new Date()
+  })
   paintTodoList()
-  todoText.value = ''
-})
+});
 
 const paintTodoList = async () => {
   const todoList = await getDocs(collection(db, "todo"))
   const todoElement = document.getElementById('todoList')
-  
+
+  // todoList 만든 순서대로
+  // const todoListRef = collection(db, "todo");
+  // const orderedTodoList = await getDocs(query(todoListRef, orderBy('createdAt')))
+
   todoElement.innerHTML = `${todoList.docs.map(todo => {
     const todoData = todo.data()
+
     return `<li class="todoItem">
-      <input type='checkbox' ${todoData.checked ? 'checked' :null} onclick='checkTodo(${todoData.id}, ${todoData.checked})'/>
-      <p>${todoData.todoText}</p>
-      <button onclick='deleteTodo(${todo.id})'>x</button>
-      </li>`
+        <input class="checkButton" type='checkbox' ${todoData.checked ? 'checked' :null} id=${todo.id}/>
+        <p>${todoData.todoText}</p>
+        <button class="deleteButton" id=${todo.id}>x</button>
+        </li>`
     }).join('')}`
-}
+};
 
-const deleteTodo  = async (id) => {
-  await deleteDoc(doc(db, "todo", id));
-  // paintTodoList()
-}
+document.addEventListener('click', async (event) => {
+  event.preventDefault()
 
-const checkTodo = async (id, checked) => {
-  await updateDoc(doc(db, 'todo', id), {
-    checked: !checked
-  });
-  // paintTodoList()
-}
+  if(event.target.className === 'checkButton') {
+    await checkTodo(event.target.id, event.target.checked)
+  }
+
+  if(event.target.className === 'deleteButton') {
+    await deleteTodo(event.target.id)
+  }
+})
 
 paintTodoList()
