@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
-import { getFirestore , collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
+import { getFirestore , collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
 
 
 const firebaseConfig = {
@@ -19,17 +19,31 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth();
-console.log(auth)
+let uid = ''
+
+onAuthStateChanged (auth, (user) => {
+  if (user) {
+    uid = user.uid
+    paintTodoList()
+  } else {
+    alert('로그인 후 사용 해주세요!')
+    location.href = 'login.html'
+  }
+})
 
 const deleteTodo =  async (id) => {
-  await deleteDoc(doc(db, "todo", id))
+  // await deleteDoc(doc(db, "todo", id))
+  await deleteDoc(doc(db, "todoList", uid, 'myTodo', id))
   await paintTodoList()
  };
  
 const checkTodo = async (id, checked) => {
-   await updateDoc(doc(db, 'todo', id), {
-     checked: checked
-   });
+  //  await updateDoc(doc(db, 'todo', id), {
+  //    checked: checked
+  //  });
+  await updateDoc(doc(db, 'todoList', uid, 'myTodo', id), {
+    checked: checked
+  });
    await paintTodoList()
  };
 
@@ -37,23 +51,40 @@ const checkTodo = async (id, checked) => {
   event.preventDefault()
   const todoText = document.getElementById('todoInput');
 
-  await addDoc(collection(db, "todo"), {
+  // await addDoc(collection(db, "todo"), {
+  //   todoText: todoText.value,
+  //   checked: false,
+  //   createdAt: serverTimestamp()
+  // })
+
+  await addDoc(collection(db, "todoList", uid, 'myTodo'), {
     todoText: todoText.value,
     checked: false,
-    createdAt: new Date()
+    createdAt: serverTimestamp()
   })
+  todoText.value = ''
   paintTodoList()
 });
 
 const paintTodoList = async () => {
-  const todoList = await getDocs(collection(db, "todo"))
-  const todoElement = document.getElementById('todoList')
+  // const todoList = await getDocs(collection(db, "todo"))
+  // const todoElement = document.getElementById('todoList')
 
   // todoList 만든 순서대로
   // const todoListRef = collection(db, "todo");
   // const orderedTodoList = await getDocs(query(todoListRef, orderBy('createdAt')))
+  // const todoElement = document.getElementById('todoList')
 
-  todoElement.innerHTML = `${todoList.docs.map(todo => {
+  // const todoList = await getDocs(collection(db, "todoList", uid, 'myTodo'))
+  // const todoElement = document.getElementById('todoList')
+  // console.log(todoList.docs)
+
+  // todoList 만든 순서대로
+  const todoListRef = collection(db, "todoList", uid, "myTodo");
+  const orderedTodoList = await getDocs(query(todoListRef, orderBy('createdAt')))
+  const todoElement = document.getElementById('todoList')
+
+  todoElement.innerHTML = `${orderedTodoList.docs.map(todo => {
     const todoData = todo.data()
 
     return `<li class="todoItem">
@@ -76,4 +107,4 @@ document.addEventListener('click', async (event) => {
   }
 })
 
-paintTodoList()
+// paintTodoList()
