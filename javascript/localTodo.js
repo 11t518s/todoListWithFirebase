@@ -34,11 +34,14 @@ const checkTodo = (id) => {
 const paintTodoList = () => {
 
   todoElement.innerHTML = `${todoList.map(todo => {
-      return `<li class="todoItem">
-          <input class="checkButton" type='checkbox' ${todo.checked ?'checked' :null} id=${todo.id} />
-          <p>${todo.todoText}</p>
-          <button class="deleteButton" id=${todo.id}>x</button>
-        </li>`
+      return `
+        <div>
+          <li class="todoItem">
+            <input class="checkButton" type='checkbox' ${todo.checked ?'checked' :null} id=${todo.id} />
+            <p>${todo.todoText}</p>
+            <button class="deleteButton" id=${todo.id}>x</button>
+          </li>
+        </div>`
     }).join('')}`
   }
       

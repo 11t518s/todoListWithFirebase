@@ -87,11 +87,14 @@ const paintTodoList = async () => {
   todoElement.innerHTML = `${orderedTodoList.docs.map(todo => {
     const todoData = todo.data()
 
-    return `<li class="todoItem">
-        <input class="checkButton" type='checkbox' ${todoData.checked ? 'checked' :null} id=${todo.id}/>
-        <p>${todoData.todoText}</p>
-        <button class="deleteButton" id=${todo.id}>x</button>
-        </li>`
+    return `
+      <div>  
+        <li class="todoItem">
+          <input class="checkButton" type='checkbox' ${todoData.checked ? 'checked' :null} id=${todo.id}/>
+          <p>${todoData.todoText}</p>
+          <button class="deleteButton" id=${todo.id}>x</button>
+        </li>
+      </div>`
     }).join('')}`
 };
 

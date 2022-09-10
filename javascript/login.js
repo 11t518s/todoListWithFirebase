@@ -32,7 +32,7 @@ document.getElementById("googleLogin").addEventListener("click", () => {
         const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
-        location.href =  '/todo.html'
+        location.href =  '/loginTodo.html'
       // ...
     })
     .catch((error) => {
