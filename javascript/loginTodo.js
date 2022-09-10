@@ -21,33 +21,7 @@ const db = getFirestore(app);
 const auth = getAuth();
 let uid = ''
 
-onAuthStateChanged (auth, (user) => {
-  if (user) {
-    uid = user.uid
-    paintTodoList()
-  } else {
-    alert('로그인 후 사용 해주세요!')
-    location.href = 'login.html'
-  }
-})
-
-const deleteTodo =  async (id) => {
-  // await deleteDoc(doc(db, "todo", id))
-  await deleteDoc(doc(db, "todoList", uid, 'myTodo', id))
-  await paintTodoList()
- };
- 
-const checkTodo = async (id, checked) => {
-  //  await updateDoc(doc(db, 'todo', id), {
-  //    checked: checked
-  //  });
-  await updateDoc(doc(db, 'todoList', uid, 'myTodo', id), {
-    checked: checked
-  });
-   await paintTodoList()
- };
-
- document.getElementById('addTodoButton').addEventListener('click', async (event) => {
+document.getElementById('addTodoButton').addEventListener('click', async (event) => {
   event.preventDefault()
   const todoText = document.getElementById('todoInput');
 
@@ -65,6 +39,7 @@ const checkTodo = async (id, checked) => {
   todoText.value = ''
   paintTodoList()
 });
+
 
 const paintTodoList = async () => {
   // const todoList = await getDocs(collection(db, "todo"))
@@ -98,6 +73,22 @@ const paintTodoList = async () => {
     }).join('')}`
 };
 
+const deleteTodo =  async (id) => {
+  // await deleteDoc(doc(db, "todo", id))
+  await deleteDoc(doc(db, "todoList", uid, 'myTodo', id))
+  await paintTodoList()
+ };
+ 
+const checkTodo = async (id, checked) => {
+  //  await updateDoc(doc(db, 'todo', id), {
+  //    checked: checked
+  //  });
+  await updateDoc(doc(db, 'todoList', uid, 'myTodo', id), {
+    checked: checked
+  });
+   await paintTodoList()
+ };
+
 document.addEventListener('click', async (event) => {
   event.preventDefault()
 
@@ -109,5 +100,17 @@ document.addEventListener('click', async (event) => {
     await deleteTodo(event.target.id)
   }
 })
+
+onAuthStateChanged (auth, (user) => {
+  if (user) {
+    uid = user.uid
+    paintTodoList()
+  } else {
+    alert('로그인 후 사용 해주세요!')
+    location.href = 'login.html'
+  }
+})
+
+
 
 // paintTodoList()
